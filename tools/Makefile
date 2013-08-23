@@ -21,6 +21,7 @@
 # MA 02111-1307 USA
 #
 
+VPATH = ../lib_generic
 TOOLSUBDIRS =
 
 #
