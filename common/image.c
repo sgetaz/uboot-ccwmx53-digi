@@ -65,7 +65,7 @@ extern int do_bdinfo(cmd_tbl_t *cmdtp, int flag, int argc, char *argv[]);
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static image_header_t* image_get_ramdisk (ulong rd_addr, uint8_t arch,
+static image_header_t* image_get_ramdisk (u_long rd_addr, uint8_t arch,
 						int verify);
 #else
 #include "mkimage.h"
@@ -168,8 +168,8 @@ static void genimg_print_time (time_t timestamp);
 /*****************************************************************************/
 int image_check_hcrc (image_header_t *hdr)
 {
-	ulong hcrc;
-	ulong len = image_get_header_size ();
+	u_long hcrc;
+	u_long len = image_get_header_size ();
 	image_header_t header;
 
 	/* Copy header so we can blank CRC field for re-calculation */
@@ -183,9 +183,9 @@ int image_check_hcrc (image_header_t *hdr)
 
 int image_check_dcrc (image_header_t *hdr)
 {
-	ulong data = image_get_data (hdr);
-	ulong len = image_get_data_size (hdr);
-	ulong dcrc = crc32_wd (0, (unsigned char *)data, len, CHUNKSZ_CRC32);
+	u_long data = image_get_data (hdr);
+	u_long len = image_get_data_size (hdr);
+	u_long dcrc = crc32_wd (0, (unsigned char *)data, len, CHUNKSZ_CRC32);
 
 	return (dcrc == image_get_dcrc (hdr));
 }
@@ -203,9 +203,9 @@ int image_check_dcrc (image_header_t *hdr)
  * returns:
  *     number of components
  */
-ulong image_multi_count (image_header_t *hdr)
+u_long image_multi_count (image_header_t *hdr)
 {
-	ulong i, count = 0;
+	u_long i, count = 0;
 	uint32_t *size;
 
 	/* get start of the image payload, which in case of multi
@@ -223,8 +223,8 @@ ulong image_multi_count (image_header_t *hdr)
  * image_multi_getimg - get component data address and size
  * @hdr: pointer to the header of the multi component image
  * @idx: index of the requested component
- * @data: pointer to a ulong variable, will hold component data address
- * @len: pointer to a ulong variable, will hold component size
+ * @data: pointer to a u_long variable, will hold component data address
+ * @len: pointer to a u_long variable, will hold component size
  *
  * image_multi_getimg() returns size and data address for the requested
  * component in a multi component image.
@@ -236,12 +236,12 @@ ulong image_multi_count (image_header_t *hdr)
  *     data address and size of the component, if idx is valid
  *     0 in data and len, if idx is out of range
  */
-void image_multi_getimg (image_header_t *hdr, ulong idx,
-			ulong *data, ulong *len)
+void image_multi_getimg (image_header_t *hdr, u_long idx,
+			u_long *data, u_long *len)
 {
 	int i;
 	uint32_t *size;
-	ulong offset, count, img_data;
+	u_long offset, count, img_data;
 
 	/* get number of component */
 	count = image_multi_count (hdr);
@@ -321,8 +321,8 @@ void image_print_contents (image_header_t *hdr)
 	if (image_check_type (hdr, IH_TYPE_MULTI) ||
 			image_check_type (hdr, IH_TYPE_SCRIPT)) {
 		int i;
-		ulong data, len;
-		ulong count = image_multi_count (hdr);
+		u_long data, len;
+		u_long count = image_multi_count (hdr);
 
 		printf ("%sContents:\n", p);
 		for (i = 0; i < count; i++) {
@@ -363,7 +363,7 @@ void image_print_contents (image_header_t *hdr)
  *     pointer to a ramdisk image header, if image was found and valid
  *     otherwise, return NULL
  */
-static image_header_t* image_get_ramdisk (ulong rd_addr, uint8_t arch,
+static image_header_t* image_get_ramdisk (u_long rd_addr, uint8_t arch,
 						int verify)
 {
 	image_header_t *rd_hdr = (image_header_t *)rd_addr;
@@ -418,11 +418,11 @@ int getenv_yesno (char *var)
 	return (s && (*s == 'n')) ? 0 : 1;
 }
 
-ulong getenv_bootm_low(void)
+u_long getenv_bootm_low(void)
 {
 	char *s = getenv ("bootm_low");
 	if (s) {
-		ulong tmp = simple_strtoul (s, NULL, 16);
+		u_long tmp = simple_strtoul (s, NULL, 16);
 		return tmp;
 	}
 
@@ -455,7 +455,7 @@ phys_size_t getenv_bootm_size(void)
 #endif
 }
 
-void memmove_wd (void *to, void *from, size_t len, ulong chunksz)
+void memmove_wd (void *to, void *from, size_t len, u_long chunksz)
 {
 #if defined(CONFIG_HW_WATCHDOG) || defined(CONFIG_WATCHDOG)
 	while (len > 0) {
@@ -628,7 +628,7 @@ int genimg_get_comp_id (const char *name)
  */
 int genimg_get_format (void *img_addr)
 {
-	ulong		format = IMAGE_FORMAT_INVALID;
+	u_long		format = IMAGE_FORMAT_INVALID;
 	image_header_t	*hdr;
 #if defined(CONFIG_FIT) || defined(CONFIG_OF_LIBFDT)
 	char		*fit_hdr;
@@ -658,12 +658,12 @@ int genimg_get_format (void *img_addr)
  * returns:
  *     image start address after possible relocation from special storage
  */
-ulong genimg_get_image (ulong img_addr)
+u_long genimg_get_image (u_long img_addr)
 {
-	ulong ram_addr = img_addr;
+	u_long ram_addr = img_addr;
 
 #ifdef CONFIG_HAS_DATAFLASH
-	ulong h_size, d_size;
+	u_long h_size, d_size;
 
 	if (addr_dataflash (img_addr)){
 		/* ger RAM address */
@@ -741,8 +741,8 @@ int genimg_has_config (bootm_headers_t *images)
  * @argv: command argument list
  * @images: pointer to the bootm images structure
  * @arch: expected ramdisk architecture
- * @rd_start: pointer to a ulong variable, will hold ramdisk start address
- * @rd_end: pointer to a ulong variable, will hold ramdisk end
+ * @rd_start: pointer to a u_long variable, will hold ramdisk start address
+ * @rd_end: pointer to a u_long variable, will hold ramdisk end
  *
  * boot_get_ramdisk() is responsible for finding a valid ramdisk image.
  * Curently supported are the following ramdisk sources:
@@ -758,16 +758,16 @@ int genimg_has_config (bootm_headers_t *images)
  *     rd_start and rd_end are set to 0 if no ramdisk exists
  */
 int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
-		uint8_t arch, ulong *rd_start, ulong *rd_end)
+		uint8_t arch, u_long *rd_start, u_long *rd_end)
 {
-	ulong rd_addr, rd_load;
-	ulong rd_data, rd_len;
+	u_long rd_addr, rd_load;
+	u_long rd_data, rd_len;
 	image_header_t *rd_hdr;
 #if defined(CONFIG_FIT)
 	void		*fit_hdr;
 	const char	*fit_uname_config = NULL;
 	const char	*fit_uname_ramdisk = NULL;
-	ulong		default_addr;
+	u_long		default_addr;
 	int		rd_noffset;
 	int		cfg_noffset;
 	const void	*data;
@@ -794,7 +794,7 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
 			 * default load address.
 			 */
 			if (images->fit_uname_os)
-				default_addr = (ulong)images->fit_hdr_os;
+				default_addr = (u_long)images->fit_hdr_os;
 			else
 				default_addr = load_addr;
 
@@ -818,7 +818,7 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
 			/* use FIT configuration provided in first bootm
 			 * command argument
 			 */
-			rd_addr = (ulong)images->fit_hdr_os;
+			rd_addr = (u_long)images->fit_hdr_os;
 			fit_uname_config = images->fit_uname_cfg;
 			debug ("*  ramdisk: using config '%s' from image at 0x%08lx\n",
 					fit_uname_config, rd_addr);
@@ -923,7 +923,7 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
 			}
 			show_boot_progress (128);
 
-			rd_data = (ulong)data;
+			rd_data = (u_long)data;
 			rd_len = size;
 
 			if (fit_image_get_load (fit_hdr, rd_noffset, &rd_load)) {
@@ -963,7 +963,7 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
 		show_boot_progress (13);
 		printf ("## Loading init Ramdisk from multi component "
 				"Legacy Image at %08lx ...\n",
-				(ulong)images->legacy_hdr_os);
+				(u_long)images->legacy_hdr_os);
 
 		image_multi_getimg (images->legacy_hdr_os, 1, &rd_data, &rd_len);
 	} else {
@@ -992,9 +992,9 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
  * @lmb: pointer to lmb handle, will be used for memory mgmt
  * @rd_data: ramdisk data start address
  * @rd_len: ramdisk data length
- * @initrd_start: pointer to a ulong variable, will hold final init ramdisk
+ * @initrd_start: pointer to a u_long variable, will hold final init ramdisk
  *      start address (after possible relocation)
- * @initrd_end: pointer to a ulong variable, will hold final init ramdisk
+ * @initrd_end: pointer to a u_long variable, will hold final init ramdisk
  *      end address (after possible relocation)
  *
  * boot_ramdisk_high() takes a relocation hint from "initrd_high" environement
@@ -1008,11 +1008,11 @@ int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
  *      0 - success
  *     -1 - failure
  */
-int boot_ramdisk_high (struct lmb *lmb, ulong rd_data, ulong rd_len,
-		  ulong *initrd_start, ulong *initrd_end)
+int boot_ramdisk_high (struct lmb *lmb, u_long rd_data, u_long rd_len,
+		  u_long *initrd_start, u_long *initrd_end)
 {
 	char	*s;
-	ulong	initrd_high;
+	u_long	initrd_high;
 	int	initrd_copy_to_ram = 1;
 
 	if ((s = getenv ("initrd_high")) != NULL) {
@@ -1044,9 +1044,9 @@ int boot_ramdisk_high (struct lmb *lmb, ulong rd_data, ulong rd_len,
 			lmb_reserve(lmb, rd_data, rd_len);
 		} else {
 			if (initrd_high)
-				*initrd_start = (ulong)lmb_alloc_base (lmb, rd_len, 0x1000, initrd_high);
+				*initrd_start = (u_long)lmb_alloc_base (lmb, rd_len, 0x1000, initrd_high);
 			else
-				*initrd_start = (ulong)lmb_alloc (lmb, rd_len, 0x1000);
+				*initrd_start = (u_long)lmb_alloc (lmb, rd_len, 0x1000);
 
 			if (*initrd_start == 0) {
 				puts ("ramdisk - allocation error\n");
@@ -1085,7 +1085,7 @@ static void fdt_error (const char *msg)
 	puts (" - must RESET the board to recover.\n");
 }
 
-static image_header_t *image_get_fdt (ulong fdt_addr)
+static image_header_t *image_get_fdt (u_long fdt_addr)
 {
 	image_header_t *fdt_hdr = (image_header_t *)fdt_addr;
 
@@ -1168,7 +1168,7 @@ static int fit_check_fdt (const void *fit, int fdt_noffset, int verify)
  * @lmb: pointer to lmb handle, will be used for memory mgmt
  * @bootmap_base: base address of the bootmap region
  * @of_flat_tree: pointer to a char* variable, will hold fdt start address
- * @of_size: pointer to a ulong variable, will hold fdt length
+ * @of_size: pointer to a u_long variable, will hold fdt length
  *
  * boot_relocate_fdt() determines if the of_flat_tree address is within
  * the bootmap and if not relocates it into that region
@@ -1179,12 +1179,12 @@ static int fit_check_fdt (const void *fit, int fdt_noffset, int verify)
  *      0 - success
  *      1 - failure
  */
-int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
-		char **of_flat_tree, ulong *of_size)
+int boot_relocate_fdt (struct lmb *lmb, u_long bootmap_base,
+		char **of_flat_tree, u_long *of_size)
 {
 	char	*fdt_blob = *of_flat_tree;
-	ulong	relocate = 0;
-	ulong	of_len = 0;
+	u_long	relocate = 0;
+	u_long	of_len = 0;
 
 	/* nothing to do */
 	if (*of_size == 0)
@@ -1197,7 +1197,7 @@ int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
 
 #ifndef CONFIG_SYS_NO_FLASH
 	/* move the blob if it is in flash (set relocate) */
-	if (addr2info ((ulong)fdt_blob) != NULL)
+	if (addr2info ((u_long)fdt_blob) != NULL)
 		relocate = 1;
 #endif
 
@@ -1214,7 +1214,7 @@ int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
 	/* move flattend device tree if needed */
 	if (relocate) {
 		int err;
-		ulong of_start = 0;
+		u_long of_start = 0;
 
 		/* position on a 4K boundary before the alloc_current */
 		/* Pad the FDT by a specified amount */
@@ -1228,7 +1228,7 @@ int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
 		}
 
 		debug ("## device tree at 0x%08lX ... 0x%08lX (len=%ld=0x%lX)\n",
-			(ulong)fdt_blob, (ulong)fdt_blob + *of_size - 1,
+			(u_long)fdt_blob, (u_long)fdt_blob + *of_size - 1,
 			of_len, of_len);
 
 		printf ("   Loading Device Tree to %08lx, end %08lx ... ",
@@ -1245,8 +1245,8 @@ int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
 		*of_size = of_len;
 	} else {
 		*of_flat_tree = fdt_blob;
-		of_len = (CONFIG_SYS_BOOTMAPSZ + bootmap_base) - (ulong)fdt_blob;
-		lmb_reserve(lmb, (ulong)fdt_blob, of_len);
+		of_len = (CONFIG_SYS_BOOTMAPSZ + bootmap_base) - (u_long)fdt_blob;
+		lmb_reserve(lmb, (u_long)fdt_blob, of_len);
 		fdt_set_totalsize(*of_flat_tree, of_len);
 
 		*of_size = of_len;
@@ -1265,7 +1265,7 @@ error:
  * @argv: command argument list
  * @images: pointer to the bootm images structure
  * @of_flat_tree: pointer to a char* variable, will hold fdt start address
- * @of_size: pointer to a ulong variable, will hold fdt length
+ * @of_size: pointer to a u_long variable, will hold fdt length
  *
  * boot_get_fdt() is responsible for finding a valid flat device tree image.
  * Curently supported are the following ramdisk sources:
@@ -1281,18 +1281,18 @@ error:
  *     of_flat_tree and of_size are set to 0 if no fdt exists
  */
 int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
-		char **of_flat_tree, ulong *of_size)
+		char **of_flat_tree, u_long *of_size)
 {
-	ulong		fdt_addr;
+	u_long		fdt_addr;
 	image_header_t	*fdt_hdr;
 	char		*fdt_blob = NULL;
-	ulong		image_start, image_end;
-	ulong		load_start, load_end;
+	u_long		image_start, image_end;
+	u_long		load_start, load_end;
 #if defined(CONFIG_FIT)
 	void		*fit_hdr;
 	const char	*fit_uname_config = NULL;
 	const char	*fit_uname_fdt = NULL;
-	ulong		default_addr;
+	u_long		default_addr;
 	int		cfg_noffset;
 	int		fdt_noffset;
 	const void	*data;
@@ -1312,9 +1312,9 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 			 * address or default load address.
 			 */
 			if (images->fit_uname_rd)
-				default_addr = (ulong)images->fit_hdr_rd;
+				default_addr = (u_long)images->fit_hdr_rd;
 			else if (images->fit_uname_os)
-				default_addr = (ulong)images->fit_hdr_os;
+				default_addr = (u_long)images->fit_hdr_os;
 			else
 				default_addr = load_addr;
 
@@ -1338,7 +1338,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 			/* use FIT configuration provided in first bootm
 			 * command argument
 			 */
-			fdt_addr = (ulong)images->fit_hdr_os;
+			fdt_addr = (u_long)images->fit_hdr_os;
 			fit_uname_config = images->fit_uname_cfg;
 			debug ("*  fdt: using config '%s' from image at 0x%08lx\n",
 					fit_uname_config, fdt_addr);
@@ -1388,7 +1388,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 			 * move image data to the load address,
 			 * make sure we don't overwrite initial image
 			 */
-			image_start = (ulong)fdt_hdr;
+			image_start = (u_long)fdt_hdr;
 			image_end = image_get_image_end (fdt_hdr);
 
 			load_start = image_get_load (fdt_hdr);
@@ -1483,7 +1483,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 				 * move image data to the load address,
 				 * make sure we don't overwrite initial image
 				 */
-				image_start = (ulong)fit_hdr;
+				image_start = (u_long)fit_hdr;
 				image_end = fit_get_end (fit_hdr);
 
 				if (fit_image_get_load (fit_hdr, fdt_noffset,
@@ -1497,7 +1497,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 					}
 
 					printf ("   Loading FDT from 0x%08lx to 0x%08lx\n",
-							(ulong)data, load_start);
+							(u_long)data, load_start);
 
 					memmove ((void *)load_start,
 							(void *)data, size);
@@ -1532,7 +1532,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 	} else if (images->legacy_hdr_valid &&
 			image_check_type (&images->legacy_hdr_os_copy, IH_TYPE_MULTI)) {
 
-		ulong fdt_data, fdt_len;
+		u_long fdt_data, fdt_len;
 
 		/*
 		 * Now check if we have a legacy multi-component image,
@@ -1540,7 +1540,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 		 */
 		printf ("## Flattened Device Tree from multi "
 			"component Image at %08lX\n",
-			(ulong)images->legacy_hdr_os);
+			(u_long)images->legacy_hdr_os);
 
 		image_multi_getimg (images->legacy_hdr_os, 2, &fdt_data, &fdt_len);
 		if (fdt_len) {
@@ -1569,7 +1569,7 @@ int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
 	*of_flat_tree = fdt_blob;
 	*of_size = be32_to_cpu (fdt_totalsize (fdt_blob));
 	debug ("   of_flat_tree at 0x%08lx size 0x%08lx\n",
-			(ulong)*of_flat_tree, *of_size);
+			(u_long)*of_flat_tree, *of_size);
 
 	return 0;
 
@@ -1584,9 +1584,9 @@ error:
 /**
  * boot_get_cmdline - allocate and initialize kernel cmdline
  * @lmb: pointer to lmb handle, will be used for memory mgmt
- * @cmd_start: pointer to a ulong variable, will hold cmdline start
- * @cmd_end: pointer to a ulong variable, will hold cmdline end
- * @bootmap_base: ulong variable, holds offset in physical memory to
+ * @cmd_start: pointer to a u_long variable, will hold cmdline start
+ * @cmd_end: pointer to a u_long variable, will hold cmdline end
+ * @bootmap_base: u_long variable, holds offset in physical memory to
  * base of bootmap
  *
  * boot_get_cmdline() allocates space for kernel command line below
@@ -1598,13 +1598,13 @@ error:
  *      0 - success
  *     -1 - failure
  */
-int boot_get_cmdline (struct lmb *lmb, ulong *cmd_start, ulong *cmd_end,
-			ulong bootmap_base)
+int boot_get_cmdline (struct lmb *lmb, u_long *cmd_start, u_long *cmd_end,
+			u_long bootmap_base)
 {
 	char *cmdline;
 	char *s;
 
-	cmdline = (char *)(ulong)lmb_alloc_base(lmb, CONFIG_SYS_BARGSIZE, 0xf,
+	cmdline = (char *)(u_long)lmb_alloc_base(lmb, CONFIG_SYS_BARGSIZE, 0xf,
 					 CONFIG_SYS_BOOTMAPSZ + bootmap_base);
 
 	if (cmdline == NULL)
@@ -1615,7 +1615,7 @@ int boot_get_cmdline (struct lmb *lmb, ulong *cmd_start, ulong *cmd_end,
 
 	strcpy(cmdline, s);
 
-	*cmd_start = (ulong) & cmdline[0];
+	*cmd_start = (u_long) & cmdline[0];
 	*cmd_end = *cmd_start + strlen(cmdline);
 
 	debug ("## cmdline at 0x%08lx ... 0x%08lx\n", *cmd_start, *cmd_end);
@@ -1627,7 +1627,7 @@ int boot_get_cmdline (struct lmb *lmb, ulong *cmd_start, ulong *cmd_end,
  * boot_get_kbd - allocate and initialize kernel copy of board info
  * @lmb: pointer to lmb handle, will be used for memory mgmt
  * @kbd: double pointer to board info data
- * @bootmap_base: ulong variable, holds offset in physical memory to
+ * @bootmap_base: u_long variable, holds offset in physical memory to
  * base of bootmap
  *
  * boot_get_kbd() allocates space for kernel copy of board info data below
@@ -1638,16 +1638,16 @@ int boot_get_cmdline (struct lmb *lmb, ulong *cmd_start, ulong *cmd_end,
  *      0 - success
  *     -1 - failure
  */
-int boot_get_kbd (struct lmb *lmb, bd_t **kbd, ulong bootmap_base)
+int boot_get_kbd (struct lmb *lmb, bd_t **kbd, u_long bootmap_base)
 {
-	*kbd = (bd_t *)(ulong)lmb_alloc_base(lmb, sizeof(bd_t), 0xf,
+	*kbd = (bd_t *)(u_long)lmb_alloc_base(lmb, sizeof(bd_t), 0xf,
 				      CONFIG_SYS_BOOTMAPSZ + bootmap_base);
 	if (*kbd == NULL)
 		return -1;
 
 	**kbd = *(gd->bd);
 
-	debug ("## kernel board info at 0x%08lx\n", (ulong)*kbd);
+	debug ("## kernel board info at 0x%08lx\n", (u_long)*kbd);
 
 #if defined(DEBUG) && defined(CONFIG_CMD_BDI)
 	do_bdinfo(NULL, 0, 0, NULL);
@@ -1663,8 +1663,8 @@ int boot_get_kbd (struct lmb *lmb, bd_t **kbd, ulong bootmap_base)
 /* New uImage format routines */
 /*****************************************************************************/
 #ifndef USE_HOSTCC
-static int fit_parse_spec (const char *spec, char sepc, ulong addr_curr,
-		ulong *addr, const char **name)
+static int fit_parse_spec (const char *spec, char sepc, u_long addr_curr,
+		u_long *addr, const char **name)
 {
 	const char *sep;
 
@@ -1687,7 +1687,7 @@ static int fit_parse_spec (const char *spec, char sepc, ulong addr_curr,
  * fit_parse_conf - parse FIT configuration spec
  * @spec: input string, containing configuration spec
  * @add_curr: current image address (to be used as a possible default)
- * @addr: pointer to a ulong variable, will hold FIT image address of a given
+ * @addr: pointer to a u_long variable, will hold FIT image address of a given
  * configuration
  * @conf_name double pointer to a char, will hold pointer to a configuration
  * unit name
@@ -1704,8 +1704,8 @@ static int fit_parse_spec (const char *spec, char sepc, ulong addr_curr,
  *     addr and conf_name are set accordingly
  *     0 otherwise
  */
-inline int fit_parse_conf (const char *spec, ulong addr_curr,
-		ulong *addr, const char **conf_name)
+inline int fit_parse_conf (const char *spec, u_long addr_curr,
+		u_long *addr, const char **conf_name)
 {
 	return fit_parse_spec (spec, '#', addr_curr, addr, conf_name);
 }
@@ -1714,7 +1714,7 @@ inline int fit_parse_conf (const char *spec, ulong addr_curr,
  * fit_parse_subimage - parse FIT subimage spec
  * @spec: input string, containing subimage spec
  * @add_curr: current image address (to be used as a possible default)
- * @addr: pointer to a ulong variable, will hold FIT image address of a given
+ * @addr: pointer to a u_long variable, will hold FIT image address of a given
  * subimage
  * @image_name: double pointer to a char, will hold pointer to a subimage name
  *
@@ -1730,8 +1730,8 @@ inline int fit_parse_conf (const char *spec, ulong addr_curr,
  *     addr and image_name are set accordingly
  *     0 otherwise
  */
-inline int fit_parse_subimage (const char *spec, ulong addr_curr,
-		ulong *addr, const char **image_name)
+inline int fit_parse_subimage (const char *spec, u_long addr_curr,
+		u_long *addr, const char **image_name)
 {
 	return fit_parse_spec (spec, ':', addr_curr, addr, image_name);
 }
@@ -1742,7 +1742,7 @@ static void fit_get_debug (const void *fit, int noffset,
 {
 	debug ("Can't get '%s' property from FIT 0x%08lx, "
 		"node: offset %d, name %s (%s)\n",
-		prop_name, (ulong)fit, noffset,
+		prop_name, (u_long)fit, noffset,
 		fit_get_name (fit, noffset, NULL),
 		fdt_strerror (err));
 }
@@ -1871,7 +1871,7 @@ void fit_image_print (const void *fit, int image_noffset, const char *p)
 	char *desc;
 	uint8_t type, arch, os, comp;
 	size_t size;
-	ulong load, entry;
+	u_long load, entry;
 	const void *data;
 	int noffset;
 	int ndepth;
@@ -1898,7 +1898,7 @@ void fit_image_print (const void *fit, int image_noffset, const char *p)
 	if (ret)
 		printf ("unavailable\n");
 	else
-		printf ("0x%08lx\n", (ulong)data);
+		printf ("0x%08lx\n", (u_long)data);
 #endif
 
 	printf ("%s  Data Size:    ", p);
@@ -2236,7 +2236,7 @@ int fit_image_get_comp (const void *fit, int noffset, uint8_t *comp)
  *     0, on success
  *     -1, on failure
  */
-int fit_image_get_load (const void *fit, int noffset, ulong *load)
+int fit_image_get_load (const void *fit, int noffset, u_long *load)
 {
 	int len;
 	const uint32_t *data;
@@ -2264,7 +2264,7 @@ int fit_image_get_load (const void *fit, int noffset, ulong *load)
  *     0, on success
  *     -1, on failure
  */
-int fit_image_get_entry (const void *fit, int noffset, ulong *entry)
+int fit_image_get_entry (const void *fit, int noffset, u_long *entry)
 {
 	int len;
 	const uint32_t *data;
@@ -2724,7 +2724,7 @@ int fit_all_image_check_hashes (const void *fit)
 
 	/* Process all image subnodes, check hashes for each */
 	printf ("## Checking hash(es) for FIT Image at %08lx ...\n",
-		(ulong)fit);
+		(u_long)fit);
 	for (ndepth = 0, count = 0,
 		noffset = fdt_next_node (fit, images_noffset, &ndepth);
 		(noffset >= 0) && (ndepth > 0);

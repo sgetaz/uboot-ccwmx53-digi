@@ -187,9 +187,9 @@ typedef struct image_header {
 } image_header_t;
 
 typedef struct image_info {
-	ulong		start, end;		/* start/end of blob */
-	ulong		image_start, image_len; /* start of image within blob, len of image */
-	ulong		load;			/* load addr for the image */
+	u_long		start, end;		/* start/end of blob */
+	u_long		image_start, image_len; /* start of image within blob, len of image */
+	u_long		load;			/* load addr for the image */
 	uint8_t		comp, type, os;		/* compression, type of image, os type */
 } image_info_t;
 
@@ -205,7 +205,7 @@ typedef struct bootm_headers {
 	 */
 	image_header_t	*legacy_hdr_os;		/* image header pointer */
 	image_header_t	legacy_hdr_os_copy;	/* header copy */
-	ulong		legacy_hdr_valid;
+	u_long		legacy_hdr_valid;
 
 #if defined(CONFIG_FIT)
 	const char	*fit_uname_cfg;	/* configuration node unit name */
@@ -227,19 +227,19 @@ typedef struct bootm_headers {
 
 #ifndef USE_HOSTCC
 	image_info_t	os;		/* os image info */
-	ulong		ep;		/* entry point of OS */
+	u_long		ep;		/* entry point of OS */
 
-	ulong		rd_start, rd_end;/* ramdisk start/end */
+	u_long		rd_start, rd_end;/* ramdisk start/end */
 
 #ifdef CONFIG_OF_LIBFDT
 	char		*ft_addr;	/* flat dev tree address */
 #endif
-	ulong		ft_len;		/* length of flat device tree */
+	u_long		ft_len;		/* length of flat device tree */
 
-	ulong		initrd_start;
-	ulong		initrd_end;
-	ulong		cmdline_start;
-	ulong		cmdline_end;
+	u_long		initrd_start;
+	u_long		initrd_end;
+	u_long		cmdline_start;
+	u_long		cmdline_end;
 	bd_t		*kbd;
 #endif
 
@@ -301,26 +301,26 @@ int genimg_get_comp_id (const char *name);
 
 int genimg_get_format (void *img_addr);
 int genimg_has_config (bootm_headers_t *images);
-ulong genimg_get_image (ulong img_addr);
+u_long genimg_get_image (u_long img_addr);
 
 int boot_get_ramdisk (int argc, char *argv[], bootm_headers_t *images,
-		uint8_t arch, ulong *rd_start, ulong *rd_end);
+		uint8_t arch, u_long *rd_start, u_long *rd_end);
 
 
 #ifdef CONFIG_OF_LIBFDT
 int boot_get_fdt (int flag, int argc, char *argv[], bootm_headers_t *images,
-		char **of_flat_tree, ulong *of_size);
-int boot_relocate_fdt (struct lmb *lmb, ulong bootmap_base,
-		char **of_flat_tree, ulong *of_size);
+		char **of_flat_tree, u_long *of_size);
+int boot_relocate_fdt (struct lmb *lmb, u_long bootmap_base,
+		char **of_flat_tree, u_long *of_size);
 #endif
 
 #if defined(CONFIG_PPC) || defined(CONFIG_M68K)
-int boot_ramdisk_high (struct lmb *lmb, ulong rd_data, ulong rd_len,
-		  ulong *initrd_start, ulong *initrd_end);
+int boot_ramdisk_high (struct lmb *lmb, u_long rd_data, u_long rd_len,
+		  u_long *initrd_start, u_long *initrd_end);
 
-int boot_get_cmdline (struct lmb *lmb, ulong *cmd_start, ulong *cmd_end,
-			ulong bootmap_base);
-int boot_get_kbd (struct lmb *lmb, bd_t **kbd, ulong bootmap_base);
+int boot_get_cmdline (struct lmb *lmb, u_long *cmd_start, u_long *cmd_end,
+			u_long bootmap_base);
+int boot_get_kbd (struct lmb *lmb, bd_t **kbd, u_long bootmap_base);
 #endif /* CONFIG_PPC || CONFIG_M68K */
 #endif /* !USE_HOSTCC */
 
@@ -376,18 +376,18 @@ static inline uint32_t image_get_data_size (image_header_t *hdr)
  * returns:
  *     image payload data start address
  */
-static inline ulong image_get_data (image_header_t *hdr)
+static inline u_long image_get_data (image_header_t *hdr)
 {
-	return ((ulong)hdr + image_get_header_size ());
+	return ((u_long)hdr + image_get_header_size ());
 }
 
 static inline uint32_t image_get_image_size (image_header_t *hdr)
 {
 	return (image_get_size (hdr) + image_get_header_size ());
 }
-static inline ulong image_get_image_end (image_header_t *hdr)
+static inline u_long image_get_image_end (image_header_t *hdr)
 {
-	return ((ulong)hdr + image_get_image_size (hdr));
+	return ((u_long)hdr + image_get_image_size (hdr));
 }
 
 #define image_set_hdr_l(f) \
@@ -422,9 +422,9 @@ int image_check_hcrc (image_header_t *hdr);
 int image_check_dcrc (image_header_t *hdr);
 #ifndef USE_HOSTCC
 int getenv_yesno (char *var);
-ulong getenv_bootm_low(void);
+u_long getenv_bootm_low(void);
 phys_size_t getenv_bootm_size(void);
-void memmove_wd (void *to, void *from, size_t len, ulong chunksz);
+void memmove_wd (void *to, void *from, size_t len, u_long chunksz);
 #endif
 
 static inline int image_check_magic (image_header_t *hdr)
@@ -444,9 +444,9 @@ static inline int image_check_os (image_header_t *hdr, uint8_t os)
 	return (image_get_os (hdr) == os);
 }
 
-ulong image_multi_count (image_header_t *hdr);
-void image_multi_getimg (image_header_t *hdr, ulong idx,
-			ulong *data, ulong *len);
+u_long image_multi_count (image_header_t *hdr);
+void image_multi_getimg (image_header_t *hdr, u_long idx,
+			u_long *data, u_long *len);
 
 void image_print_contents (image_header_t *hdr);
 
@@ -519,10 +519,10 @@ static inline int image_check_target_arch (image_header_t *hdr)
 #define FIT_MAX_HASH_LEN	20	/* max(crc32_len(4), sha1_len(20)) */
 
 /* cmdline argument format parsing */
-inline int fit_parse_conf (const char *spec, ulong addr_curr,
-		ulong *addr, const char **conf_name);
-inline int fit_parse_subimage (const char *spec, ulong addr_curr,
-		ulong *addr, const char **image_name);
+inline int fit_parse_conf (const char *spec, u_long addr_curr,
+		u_long *addr, const char **conf_name);
+inline int fit_parse_subimage (const char *spec, u_long addr_curr,
+		u_long *addr, const char **image_name);
 
 void fit_print_contents (const void *fit);
 void fit_image_print (const void *fit, int noffset, const char *p);
@@ -535,7 +535,7 @@ void fit_image_print_hash (const void *fit, int noffset, const char *p);
  * returns:
  *     size of the FIT image (blob) in memory
  */
-static inline ulong fit_get_size (const void *fit)
+static inline u_long fit_get_size (const void *fit)
 {
 	return fdt_totalsize (fit);
 }
@@ -547,9 +547,9 @@ static inline ulong fit_get_size (const void *fit)
  * returns:
  *     end address of the FIT image (blob) in memory
  */
-static inline ulong fit_get_end (const void *fit)
+static inline u_long fit_get_end (const void *fit)
 {
-	return (ulong)fit + fdt_totalsize (fit);
+	return (u_long)fit + fdt_totalsize (fit);
 }
 
 /**
@@ -574,8 +574,8 @@ int fit_image_get_os (const void *fit, int noffset, uint8_t *os);
 int fit_image_get_arch (const void *fit, int noffset, uint8_t *arch);
 int fit_image_get_type (const void *fit, int noffset, uint8_t *type);
 int fit_image_get_comp (const void *fit, int noffset, uint8_t *comp);
-int fit_image_get_load (const void *fit, int noffset, ulong *load);
-int fit_image_get_entry (const void *fit, int noffset, ulong *entry);
+int fit_image_get_load (const void *fit, int noffset, u_long *load);
+int fit_image_get_entry (const void *fit, int noffset, u_long *entry);
 int fit_image_get_data (const void *fit, int noffset,
 				const void **data, size_t *size);
 
