@@ -38,7 +38,7 @@ SRCS	:= $(COBJS:.o=.c)
 OBJS	:= $(addprefix $(obj),$(COBJS))
 
 all:	$(LIB)
-	ranlib $(LIB)
+	$(CROSS_COMPILE)ranlib $(LIB)
 
 $(LIB):	$(obj).depend $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)

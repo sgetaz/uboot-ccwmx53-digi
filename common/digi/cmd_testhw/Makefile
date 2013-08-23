@@ -67,7 +67,7 @@ CPPFLAGS += -I $(DIGI_DIR) -I $(DIGI_DIR)/cmd_nvram/lib/include \
 	-I $(DIGI_DIR)/cmd_nvram -DUBOOT
 
 all:	$(LIB)
-	ranlib $(LIB)
+	$(CROSS_COMPILE)ranlib $(LIB)
 
 $(LIB): $(obj).depend $(OBJS)
 	$(AR) $(ARFLAGS) $@ $(OBJS)
