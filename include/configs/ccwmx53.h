@@ -589,4 +589,7 @@
 # define CONFIG_DUAL_BOOT_PERSISTENT_IN_NVRAM
 #endif
 
+#define	CONFIG_API
+#define CONFIG_SYS_MMC_MAX_DEVICE 2
+
 #endif				/* __CONFIG_H */
