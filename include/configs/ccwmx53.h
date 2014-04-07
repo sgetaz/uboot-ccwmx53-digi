@@ -550,6 +550,7 @@
 /**
  * Splash screen
  */
+#define CONFIG_UBOOT_SPLASH
 #ifdef CONFIG_UBOOT_SPLASH
 # define CONFIG_SPLASH_SCREEN	1
 # define CONFIG_VIDEO_MX5
