@@ -3300,7 +3300,8 @@ extern unsigned int __machine_arch_type;
 #define MACH_TYPE_CCMX53               3346
 #define MACH_TYPE_CCMX53JS             3347
 #define MACH_TYPE_CCWMX53              3348
-#define MACH_TYPE_CCWMX53JS            3349
+##define MACH_TYPE_CCWMX53JS            3349
+#define MACH_TYPE_CCWMX53JS	       0xFFFFFFFF
 #define MACH_TYPE_FRISMS               3350
 #define MACH_TYPE_MSM7X27A_FFA         3351
 #define MACH_TYPE_MSM7X27A_SURF        3352
