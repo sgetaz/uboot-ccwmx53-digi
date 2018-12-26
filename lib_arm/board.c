@@ -157,23 +157,23 @@ void *sbrk (ptrdiff_t increment)
  * May be supplied by boards if desired
  */
 void inline __coloured_LED_init (void) {}
-void coloured_LED_init (void) __attribute__((weak, alias("__coloured_LED_init")));
+void coloured_LED_init (void) __attribute__((weak));
 void inline __red_LED_on (void) {}
-void red_LED_on (void) __attribute__((weak, alias("__red_LED_on")));
+void red_LED_on (void) __attribute__((weak));
 void inline __red_LED_off(void) {}
-void red_LED_off(void) __attribute__((weak, alias("__red_LED_off")));
+void red_LED_off(void) __attribute__((weak));
 void inline __green_LED_on(void) {}
-void green_LED_on(void) __attribute__((weak, alias("__green_LED_on")));
+void green_LED_on(void) __attribute__((weak));
 void inline __green_LED_off(void) {}
-void green_LED_off(void) __attribute__((weak, alias("__green_LED_off")));
+void green_LED_off(void) __attribute__((weak));
 void inline __yellow_LED_on(void) {}
-void yellow_LED_on(void) __attribute__((weak, alias("__yellow_LED_on")));
+void yellow_LED_on(void) __attribute__((weak));
 void inline __yellow_LED_off(void) {}
-void yellow_LED_off(void) __attribute__((weak, alias("__yellow_LED_off")));
+void yellow_LED_off(void) __attribute__((weak));
 void inline __blue_LED_on(void) {}
-void blue_LED_on(void) __attribute__((weak, alias("__blue_LED_on")));
+void blue_LED_on(void) __attribute__((weak));
 void inline __blue_LED_off(void) {}
-void blue_LED_off(void) __attribute__((weak, alias("__blue_LED_off")));
+void blue_LED_off(void) __attribute__((weak));
 
 /************************************************************************
  * Init Utilities							*
